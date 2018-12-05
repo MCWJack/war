@@ -1,10 +1,9 @@
 #! /usr/bin/python
 
 import cards
+import optparse
 
 def finish(who):
-#    p1start.display()
-#    p2start.display()
     p1points = 0
     p2points = 0
     p1aces = 0
@@ -17,12 +16,7 @@ def finish(who):
         p2points += card.value()-1
         if card.value() == 14 :
             p2aces += 1
-    if who == "p1":
-        print( str(p1points) +"\t"+ str(p1aces) +"\t"+ "p1" )
-    elif who == "p2":
-        print( str(p2points) +"\t"+ str(p2aces) +"\t"+ "p2" )
-    else:
-        print( "Error." )
+    print( str(p1points) +"\t"+ str(p1aces) +"\t"+ str(p2points) +"\t"+ str(p2aces) +"\t"+ who )
     exit(0)
 
 def play(player) :
@@ -67,22 +61,53 @@ def war():
     else :
         return 0
         
+def setupHands (h1, h2):
+    p1 = cards.Hand([])
+    for c in h1.split(' '):
+        card = cards.Card(c[:-1],c[-1:])
+        p1.take(card)
+    p2 = cards.Hand([])
+    for c in h2.split(' '):
+        card = cards.Card(c[:-1],c[-1:])
+        p2.take(card)
+    return p1, p2
+
 ###############################################################################
 # Start
 ###############################################################################
 
-p1 = cards.Hand([])
-p2 = cards.Hand([])
+
+parser = optparse.OptionParser()
+parser.add_option('-d', '--display',
+                  action="store_true",
+                  dest="display_hands",
+                  default=False,)
+parser.add_option('-1', '--start1',
+                  dest="p1start",)
+parser.add_option('-2', '--start2',
+                  dest="p2start",)
+options, remainder = parser.parse_args()
+
+if options.p1start :
+    if not options.p2start :
+        print "Need to input both starting hands"
+    else:
+        p1, p2 = setupHands(options.p1start, options.p2start)
+else:
+    p1 = cards.Hand([])
+    p2 = cards.Hand([])
+    deck = cards.Deck()
+    deck.shuffle()
+    while not deck.isEmpty() :
+        p1.take(deck.deal())
+        p2.take(deck.deal())
+
+if options.display_hands :
+    p1.display()
+    p2.display()
 
 p1Winnings = cards.Hand([])
 p2Winnings = cards.Hand([])
-
-deck = cards.Deck()
-deck.shuffle()
-
-while not deck.isEmpty() :
-    p1.take(deck.deal())
-    p2.take(deck.deal())
 
 p1start = p1.copy()
 p2start = p2.copy()
@@ -107,7 +132,6 @@ while(1) :
         while x > 0 :
             x = war()
             w += 1
-#            print w
 
 
 
