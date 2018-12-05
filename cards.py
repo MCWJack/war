@@ -9,7 +9,7 @@ class Card:
         self.suit = suit
     
     def display(self):
-        sys.stdout.write(self.rank + self.suit + ' ')
+        sys.stdout.write(self.rank + self.suit)
 
     def value(self):
         if self.rank == "A":
@@ -52,8 +52,12 @@ class Hand:
             self.cards = self.cards + card.cards
     
     def display(self):
+        items = 0
         for item in self.cards:
             item.display()
+            items +=1
+            if items<len(self.cards):
+                sys.stdout.write(' ')
         sys.stdout.write('\n')
 
     def __str__(self):
